@@ -16,10 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class AuthService {
-
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+    // ... other fields and constructor ...
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -53,16 +56,20 @@ public class AuthService {
     }
 
     public String login(AuthRequest request) {
+        logger.info("Login attempt with username: {}", request.getUsername());
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            logger.info("Authentication successful for: {}", request.getUsername());
             return jwtUtil.generateToken(request.getUsername());
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Invalid credentials");
+            logger.error("Authentication failed: {}", e.getMessage());
+            throw new RuntimeException("Invalid credentials", e);
         }
     }
 
     public String forgotPassword(ForgotPasswordRequest request) {
+        logger.info("Forgot password request for email: {}", request.getEmail());
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -74,7 +81,13 @@ public class AuthService {
         message.setTo(request.getEmail());
         message.setSubject("Password Reset");
         message.setText("Your new password is: " + newPassword);
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+            logger.info("Password reset email sent to: {}", request.getEmail());
+        } catch (Exception e) {
+            logger.error("Failed to send password reset email: {}", e.getMessage());
+            throw new RuntimeException("Failed to send email", e);
+        }
 
         return "New password sent to email";
     }
