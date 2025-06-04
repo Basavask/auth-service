@@ -81,9 +81,9 @@ Use Postman to test the app’s features. Create a new collection in Postman cal
    - **Body** (raw, JSON):
      ```json
      {
-         "name": "John",
-         "surname": "Doe",
-         "email": "john.doe@example.com",
+         "name": "Basu",
+         "surname": "SK",
+         "email": "basusk@gmail.com",
          "phone": "1234567890",
          "password": "password123"
      }
@@ -96,7 +96,7 @@ Use Postman to test the app’s features. Create a new collection in Postman cal
    - **Body** (raw, JSON):
      ```json
      {
-         "username": "john.doe@example.com",
+         "username": "basusk@gmail.com",
          "password": "password123"
      }
      ```
@@ -108,7 +108,7 @@ Use Postman to test the app’s features. Create a new collection in Postman cal
    - **Body** (raw, JSON):
      ```json
      {
-         "email": "john.doe@example.com"
+         "email": "basusk@gmail.com"
      }
      ```
    - **Result**: You see `"New password sent to email"`. Check your Gmail inbox (or spam) or Mailtrap inbox for the new password.
