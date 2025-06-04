@@ -68,6 +68,7 @@ public class AuthService {
         }
     }
 
+
     public String forgotPassword(ForgotPasswordRequest request) {
         logger.info("Forgot password request for email: {}", request.getEmail());
         User user = userRepository.findByEmail(request.getEmail())
@@ -79,8 +80,17 @@ public class AuthService {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(request.getEmail());
-        message.setSubject("Password Reset");
-        message.setText("Your new password is: " + newPassword);
+        message.setSubject("Password Reset Request");
+
+        // Refactored email message
+        StringBuilder emailContent = new StringBuilder();
+        emailContent.append("Hello,\n\n")
+                .append("We received a request to reset your password for ").append(request.getEmail()).append(".\n")
+                .append("Your new temporary password is: ").append(newPassword).append("\n\n")
+                .append("This password will expire in 24 hours. Please log in and update your password in our portal.\n\n")
+                .append("Thank you,\nAuth App Team");
+        message.setText(emailContent.toString());
+
         try {
             mailSender.send(message);
             logger.info("Password reset email sent to: {}", request.getEmail());
